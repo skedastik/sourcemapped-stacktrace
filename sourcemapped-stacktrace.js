@@ -51,12 +51,11 @@ function(source_map_consumer) {
       expected_fields = 4;
       // (skip first line containing exception message)
       skip_lines = 1;
-    } else if (isFirefox()) {
+    } else {
+      // default to Firefox-formatted stack traces
       regex = /@(.*):([0-9]+):([0-9]+)/;
       expected_fields = 4;
       skip_lines = 0;
-    } else {
-      throw new Error("unknown browser :(");
     }
 
     lines = stack.split("\n").slice(skip_lines);
@@ -64,7 +63,7 @@ function(source_map_consumer) {
     for (var i=0; i < lines.length; i++) {
       line = lines[i];
       if ( opts && opts.filter && !opts.filter(line) ) continue;
-      
+
       fields = line.match(regex);
       if (fields && fields.length === expected_fields) {
         rows[i] = fields;
